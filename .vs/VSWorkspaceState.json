@@ -2,7 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\Api",
-    "\\Api\\__pycache__",
+    "\\Api\\migrations",
     "\\navasara"
   ],
   "SelectedNode": "\\Api\\views.py",
