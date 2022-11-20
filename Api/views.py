@@ -51,3 +51,5 @@ def artist_edit(request, artist_id):
         return JsonResponse({'data': 'the artist data updated successfully.', 'status': 200})
     else:
         return JsonResponse({'data': 'artist does not exits!', 'status': 404})
+
+
