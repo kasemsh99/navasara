@@ -53,3 +53,27 @@ def artist_edit(request, artist_id):
         return JsonResponse({'data': 'artist does not exits!', 'status': 404})
 
 
+
+@require_POST
+@csrf_exempt
+def artist_search(request):
+    links_lookup = Q()
+    if country := request.POST.get('country'):
+        links_lookup &= Q(country=country)
+    if genre := request.POST.get('genre'):
+        links_lookup &= Q(genre=genre)
+    if first_name := request.POST.get('first_name'):
+        links_lookup &= Q(user__first_name__contains=first_name)
+    if last_name := request.POST.get('last_name'):
+        links_lookup &= Q(user__last_name__contains=last_name)
+    if username := request.POST.get('username'):
+        links_lookup &= Q(user__username__contains=username)
+
+    artists = Artist.objects.filter(links_lookup)
+    if artists:
+        serialized_user = serializers.serialize('json', artists)
+        return JsonResponse({'data': serialized_user, 'status': 200})
+
+    return JsonResponse({'data': 'No Artists Found!', 'status': 404})
+
+
