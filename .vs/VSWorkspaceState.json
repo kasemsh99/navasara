@@ -1,6 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Api",
+    "\\Api\\__pycache__",
+    "\\navasara"
   ],
+  "SelectedNode": "\\Api\\views.py",
   "PreviewInSolutionExplorer": false
 }
