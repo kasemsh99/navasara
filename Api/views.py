@@ -23,3 +23,31 @@ def user_login(request):
     return JsonResponse({'data':'invalid Username or Password!', 'status':400})
     
 
+	@require_GET
+@csrf_exempt
+def artist_data(request, artist_id):
+    try:
+        artist = Artist.objects.get(pk=artist_id)
+        serialized_artist = serializers.serialize('json', [artist])
+        return JsonResponse({'data': serialized_artist, 'status': 200})
+    except:
+        return JsonResponse({'data': 'artist does not exits!', 'status': 404})
+
+
+@require_POST
+@csrf_exempt
+def artist_edit(request, artist_id):
+    country = request.POST.get('country')
+    bio = request.POST.get('bio')
+    genre = request.POST.get('genre')
+
+    artist = Artist.objects.filter(pk=artist_id)
+    if artist.exists():
+        artist = artist.first()
+        artist.country = country if country else artist.country
+        artist.bio = bio if bio else artist.bio
+        artist.genre = genre if genre else artist.genre
+        artist.save()
+        return JsonResponse({'data': 'the artist data updated successfully.', 'status': 200})
+    else:
+        return JsonResponse({'data': 'artist does not exits!', 'status': 404})
