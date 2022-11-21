@@ -1,10 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Api",
-    "\\Api\\migrations",
-    "\\navasara"
+    "\\Api"
   ],
-  "SelectedNode": "\\Api\\views.py",
+  "SelectedNode": "\\Api\\migrations",
   "PreviewInSolutionExplorer": false
 }
