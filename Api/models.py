@@ -29,3 +29,5 @@ class Media(models.Model):
     description = models.TextField(null=True, blank=True)
     lyrics = models.TextField(null=True, blank=True)
     views = models.IntegerField(default=0)
+
+    
