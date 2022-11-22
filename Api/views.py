@@ -22,6 +22,42 @@ def user_login(request):
 
     return JsonResponse({'data':'invalid Username or Password!', 'status':400})
 
+@require_POST
+@csrf_exempt
+def user_register(request):
+    if request.user.is_authenticated:
+        return JsonResponse({'data': 'You are already logged in', 'status': 400})
+
+    username = request.POST.get('username')
+    first_name = request.POST.get('first_name')
+    last_name = request.POST.get('last_name')
+    email = request.POST.get('email')
+    password = request.POST.get('password')
+    re_password = request.POST.get('re_password')
+    is_active = request.POST.get('is_active')
+    is_staff = request.POST.get('is_staff')
+    is_superuser = request.POST.get('is_superuser')
+    is_artist = request.POST.get('is_artist')
+
+    user = CustomUser.objects.filter(username=username)
+    if user.exists():
+        return JsonResponse({'data': 'Username already exists!', 'status': 400})
+
+    if password == re_password:
+        try:
+            user = CustomUser.objects.create_user(username=username, password=password, email=email,
+                                                  first_name=first_name, last_name=last_name, is_active=int(is_active),
+                                                  is_staff=int(is_staff), is_superuser=int(is_superuser),
+                                                  is_artist=int(is_artist))
+            login(request, user)
+            return JsonResponse({'data': 'registered successfully.', 'status': 200})
+
+        except Exception as e:
+            return JsonResponse({'data': 'invalid data', 'status': 400})
+    else:
+        return JsonResponse({'data': 'Passwords not match!', 'status': 400})
+
+
 
     
 @require_GET
