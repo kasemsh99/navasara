@@ -30,4 +30,18 @@ class Media(models.Model):
     lyrics = models.TextField(null=True, blank=True)
     views = models.IntegerField(default=0)
 
+
+    
+class Favorite(models.Model):
+    title = models.CharField(max_length=50)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    medias = models.ManyToManyField(Media, blank=True)
+
+
+class Comment(models.Model):
+    text = models.TextField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    media = models.ForeignKey(Media, on_delete=models.CASCADE)
+
+
     
