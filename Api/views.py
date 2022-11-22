@@ -126,6 +126,49 @@ def artist_search(request):
 
     return JsonResponse({'data': 'No Artists Found!', 'status': 404})
 
+@require_POST
+@csrf_exempt
+def media_search(request):
+    links_lookup = Q()
+    if title := request.POST.get('title'):
+        links_lookup &= Q(title__contains=title)
+    if media_type := request.POST.get('type'):
+        links_lookup &= Q(type=media_type)
+    if artist_first_name := request.POST.get('artist_first_name'):
+        links_lookup &= Q(artist__user__first_name__contains=artist_first_name)
+    if artist_last_name := request.POST.get('artist_last_name'):
+        links_lookup &= Q(artist__user__last_name__contains=artist_last_name)
+    if genre := request.POST.get('genre'):
+        links_lookup &= Q(genre=genre)
+
+    medias = Media.objects.filter(links_lookup)
+    if medias:
+        serialized_user = serializers.serialize('json', medias)
+        return JsonResponse({'data': serialized_user, 'status': 200})
+
+    return JsonResponse({'data': 'No Artists Found!', 'status': 404})
+
+
+@require_POST
+@csrf_exempt
+def media_create(request):
+    title = request.POST.get('title')
+    media_type = request.POST.get('type')
+    artist_id = request.POST.get('artist_id')
+    file = request.POST.get('file')
+    genre = request.POST.get('genre')
+    description = request.POST.get('description')
+    lyrics = request.POST.get('lyrics')
+
+    try:
+        media = Media.objects.create(title=title, type=media_type, artist_id=artist_id,
+                                     file=file, genre=genre, description=description, lyrics=lyrics)
+        serialized_media = serializers.serialize('json', [media])
+        return JsonResponse({'data': serialized_media, 'status': 200})
+    except Exception as e:
+        return JsonResponse({'data': 'invalid data', 'status': 400})
+
+
 
 @require_POST
 @csrf_exempt
