@@ -21,6 +21,20 @@ def user_login(request):
             return JsonResponse({'data':'logged in successfully', 'status':200})
 
     return JsonResponse({'data':'invalid Username or Password!', 'status':400})
+
+
+    
+@require_GET
+@csrf_exempt
+def user_data(request, user_id):
+    try:
+        user = CustomUser.objects.get(pk=user_id)
+        serialized_user = serializers.serialize('json', [user])
+        return JsonResponse({'data': serialized_user, 'status': 200})
+    except:
+        return JsonResponse({'data': 'user does not exits!', 'status': 404})
+
+
     
 
 	@require_GET
