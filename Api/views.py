@@ -90,3 +90,69 @@ def artist_search(request):
 
     return JsonResponse({'data': 'No Artists Found!', 'status': 404})
 
+
+@require_POST
+@csrf_exempt
+def favorite_create(request):
+    title = request.POST.get('title')
+    user_id = request.POST.get('user_id')
+
+    try:
+        favorite = Favorite.objects.create(title=title, user_id=user_id)
+        serialized_favorite = serializers.serialize('json', [favorite])
+        return JsonResponse({'data': serialized_favorite, 'status': 200})
+    except Exception as e:
+        return JsonResponse({'data': 'invalid data', 'status': 400})
+
+
+@require_POST
+@csrf_exempt
+def add_media_to_favorite(request, favorite_id):
+    media_id = request.POST.get('media_id')
+
+    favorite = Favorite.objects.filter(pk=favorite_id)
+    if favorite.exists():
+        favorite = favorite.first()
+        favorite.medias.add(media_id)
+        return JsonResponse({'data': 'the favorite data updated successfully.', 'status': 200})
+    else:
+        return JsonResponse({'data': 'favorite does not exits!', 'status': 404})
+
+
+@require_GET
+@csrf_exempt
+def favorite_data(request, favorite_id):
+    try:
+        favorite = Favorite.objects.get(pk=favorite_id)
+        serialized_favorite = serializers.serialize('json', [favorite])
+        return JsonResponse({'data': serialized_favorite, 'status': 200})
+    except:
+        return JsonResponse({'data': 'favorite does not exits!', 'status': 404})
+
+
+@require_POST
+@csrf_exempt
+def comment_create(request):
+    text = request.POST.get('text')
+    user_id = request.POST.get('user_id')
+    media_id = request.POST.get('media_id')
+
+    try:
+        comment = Comment.objects.create(text=text, user_id=user_id, media_id=media_id)
+        serialized_comment = serializers.serialize('json', [comment])
+        return JsonResponse({'data': serialized_comment, 'status': 200})
+    except Exception as e:
+        return JsonResponse({'data': 'invalid data', 'status': 400})
+
+
+@require_POST
+@csrf_exempt
+def add_like(request, media_id):
+    media = Media.objects.filter(pk=media_id)
+    if media.exists():
+        media = media.first()
+        media.like += 1
+        media.save()
+        return JsonResponse({'data': 'the media data updated successfully.', 'status': 200})
+    else:
+        return JsonResponse({'data': 'media does not exits!', 'status': 404})
